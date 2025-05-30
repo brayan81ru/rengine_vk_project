@@ -282,6 +282,7 @@ namespace REngine {
     }
 
     // ===== Formatting =====
+    // Helper function to convert RString to string_view
     template <typename... Args>
     RString RString::Format(fmt::format_string<Args...> fmt, Args&&... args) {
         fmt::memory_buffer buf;
@@ -294,6 +295,6 @@ namespace REngine {
     template RString RString::Format<float>(fmt::format_string<float>, float&&);
     template RString RString::Format<const char*>(fmt::format_string<const char*>, const char*&&);
     template RString RString::Format<std::string_view>(fmt::format_string<std::string_view>, std::string_view&&);
-    // Add this explicit template instantiation
-    template RString RString::Format<const RString&>(fmt::format_string<const RString&>, const RString&);
+
+
 }

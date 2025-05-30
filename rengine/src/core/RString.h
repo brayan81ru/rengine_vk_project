@@ -48,6 +48,8 @@ namespace REngine {
         bool EndsWith(const char* suffix) const;
         [[nodiscard]] bool Empty() const noexcept;
 
+
+
     private:
         // SSO Buffer (24 bytes on x64)
         static constexpr size_t SSO_CAPACITY = sizeof(void*) * 3 - 1;
