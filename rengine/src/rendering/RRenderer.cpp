@@ -1,5 +1,91 @@
-﻿//
-// Created by Brayan on 30/05/2025.
-//
+﻿#include "RRenderer.h"
+#include <iostream>
+#include "EngineFactoryD3D11.h"
+#include "EngineFactoryD3D12.h"
+#include "EngineFactoryOpenGL.h"
+#include "EngineFactoryVk.h"
+#include "RefCntAutoPtr.hpp"
 
-#include "RRenderer.h"
+namespace REngine {
+    RRenderer::RRenderer(const RRenderAPI RenderApi, const Diligent::NativeWindow NativeWindowHandle) {
+        std::cout << "RRenderer::Init" << std::endl;
+
+        m_Window = NativeWindowHandle;
+
+        m_RenderAPI = RenderApi;
+
+        switch (RenderApi) {
+
+            case RRenderAPI::Direct3D11: InitializeRendererD3D11(); break;
+
+            case RRenderAPI::Direct3D12: InitializeRendererD3D12(); break;
+
+            case RRenderAPI::OpenGL: InitializeRendererOpenGL(); break;
+
+            case RRenderAPI::Vulkan: InitializeRendererVulkan(); break;
+
+            default: {
+                std::cout << "Render API not supported" << std::endl;
+            };
+        }
+    }
+
+    void RRenderer::Clear() const {
+
+        constexpr float ClearColor[] = {1.0f, 0.f, 0.f, 1.0f};
+
+        // 1. Get views
+        Diligent::ITextureView* pRTV = m_pSwapChain->GetCurrentBackBufferRTV();
+        Diligent::ITextureView* pDSV = m_pSwapChain->GetDepthBufferDSV();
+
+        // 2. Bind targets FIRST (optimal path)
+        m_pImmediateContext->SetRenderTargets(
+            1, &pRTV, pDSV,
+            Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION
+        );
+
+        // 3. Now clear (will use fast path)
+        m_pImmediateContext->ClearRenderTarget(pRTV, ClearColor,
+            Diligent::RESOURCE_STATE_TRANSITION_MODE_NONE); // No need for another transition
+
+        m_pImmediateContext->ClearDepthStencil(pDSV,
+            Diligent::CLEAR_DEPTH_FLAG, 1.f, 0,
+            Diligent::RESOURCE_STATE_TRANSITION_MODE_NONE);
+    }
+
+    void RRenderer::Frame() const {
+        m_pSwapChain->Present();
+    }
+
+    void RRenderer::InitializeRendererD3D11() {
+        const Diligent::EngineD3D11CreateInfo EngineCI;
+        auto* pFactoryD3D11 = Diligent::GetEngineFactoryD3D11();
+        pFactoryD3D11->CreateDeviceAndContextsD3D11(EngineCI, &m_pDevice, &m_pImmediateContext);
+        const Diligent::Win32NativeWindow Window{m_Window};
+        pFactoryD3D11->CreateSwapChainD3D11(m_pDevice, m_pImmediateContext, SCDesc, Diligent::FullScreenModeDesc{}, Window, &m_pSwapChain);
+    }
+
+    void RRenderer::InitializeRendererD3D12() {
+        const Diligent::EngineD3D12CreateInfo EngineCI;
+        auto* pFactoryD3D12 = Diligent::GetEngineFactoryD3D12();
+        pFactoryD3D12->CreateDeviceAndContextsD3D12(EngineCI, &m_pDevice, &m_pImmediateContext);
+        const Diligent::Win32NativeWindow Window{m_Window};
+        pFactoryD3D12->CreateSwapChainD3D12(m_pDevice, m_pImmediateContext, SCDesc, Diligent::FullScreenModeDesc{}, Window, &m_pSwapChain);
+    }
+
+    void RRenderer::InitializeRendererVulkan() {
+        const Diligent::EngineVkCreateInfo EngineCI;
+        auto* pFactoryVk = Diligent::GetEngineFactoryVk();
+        pFactoryVk->CreateDeviceAndContextsVk(EngineCI, &m_pDevice, &m_pImmediateContext);
+        const Diligent::Win32NativeWindow Window{m_Window};
+        pFactoryVk->CreateSwapChainVk(m_pDevice, m_pImmediateContext, SCDesc, Window, &m_pSwapChain);
+    }
+
+    void RRenderer::InitializeRendererOpenGL() {
+        auto* pFactoryOpenGL = Diligent::GetEngineFactoryOpenGL();
+        Diligent::EngineGLCreateInfo EngineCI;
+        const Diligent::Win32NativeWindow Window{m_Window};
+        EngineCI.Window.hWnd = Window.hWnd;
+        pFactoryOpenGL->CreateDeviceAndSwapChainGL(EngineCI, &m_pDevice, &m_pImmediateContext,SCDesc, &m_pSwapChain);
+    }
+}

@@ -1,16 +1,28 @@
-﻿//
-// Created by Brayan on 30/05/2025.
-//
+﻿#pragma once
+#define SDL_MAIN_HANDLED
+#include <SDL.h>
+#include <string>
+#include "BasicTypes.h"
+#include "NativeWindow.h"
 
-#ifndef RWINDOWS_H
-#define RWINDOWS_H
+namespace REngine {
+    class RWindows {
+    public:
 
+        static Diligent::NativeWindow SDLWindowToNativeWindow(SDL_Window* window);
 
+        RWindows(const std::string& title, int width, int height);
 
-class RWindows {
+        ~RWindows();
 
-};
+        SDL_Window* GetNativeWindow() const { return m_Window; }
 
+        void PollEvents(bool& shouldQuit);
 
+        SDL_Window* m_Window = nullptr;
 
-#endif //RWINDOWS_H
+        bool m_Initialized = false;
+    private:
+
+    };
+}

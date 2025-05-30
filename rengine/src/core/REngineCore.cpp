@@ -1,3 +1,11 @@
-﻿//
-// Created by Brayan on 30/05/2025.
-#include "REngine.h"
+﻿#include "REngineCore.h"
+#include <iostream>
+#include <__msvc_ostream.hpp>
+
+
+namespace REngine {
+    REngineCore * REngineCore::Init() {
+        std::cout << "Initializing REngineCore" << std::endl;
+        return new REngineCore();
+    }
+}
