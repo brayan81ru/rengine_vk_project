@@ -1,0 +1,6 @@
+[submodule "rengine/third_party/DiligentEngine"]
+	path = rengine/third_party/DiligentEngine
+	url = https://github.com/DiligentGraphics/DiligentEngine.git
+[submodule "rengine/third_party/fmt"]
+	path = rengine/third_party/fmt
+	url = https://github.com/fmtlib/fmt
