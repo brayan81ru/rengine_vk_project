@@ -4,7 +4,6 @@
 #include <RenderDevice.h>
 #include <rendering/ImguiBackend.h>
 
-
 namespace REngine {
 
     struct RRenderAPI {
@@ -50,8 +49,6 @@ namespace REngine {
         }
     };
 
-
-
     class RRenderer {
     public:
         RRenderer(RRenderAPI RenderApi, Diligent::NativeWindow NativeWindowHandle);
@@ -78,7 +75,6 @@ namespace REngine {
         void InitializeRendererVulkan();
 
         void InitializeRendererOpenGL();
-
 
     };
 }

@@ -7,7 +7,6 @@
 #include <RefCntAutoPtr.hpp>
 #include <imgui.h>
 
-
 namespace REngine {
     RRenderer::RRenderer(const RRenderAPI RenderApi, const Diligent::NativeWindow NativeWindowHandle) {
         std::cout << "RRenderer::Init" << std::endl;
