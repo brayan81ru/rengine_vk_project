@@ -1,20 +1,19 @@
 ﻿// engine/src/renderer/ImguiBackend.cpp
 #include "ImguiBackend.h"
 #include "imgui.h"
+#include "ImGuiUtils.hpp"
+#include "SDL_events.h"
 
 namespace REngine {
+
     ImguiBackend::ImguiBackend() = default;
 
     ImguiBackend::~ImguiBackend() {
         Shutdown();
     }
 
-    bool ImguiBackend::Initialize(
-        Diligent::IRenderDevice* device,
-        Diligent::IDeviceContext* context,
-        Diligent::ISwapChain* swapChain,
-        const char* fontPath
-    ) {
+    bool ImguiBackend::Initialize(Diligent::IRenderDevice* device,Diligent::IDeviceContext* context, const Diligent::ISwapChain* swapChain,const char* fontPath){
+
         if (m_Initialized) {
             return true;
         }
@@ -26,7 +25,7 @@ namespace REngine {
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
 
         // Setup style
-        ImGui::StyleColorsDark();
+        ImGui::StyleColorsDiligent();
 
         // Initialize Diligent ImGui implementation
         const auto& SCDesc = swapChain->GetDesc();
@@ -41,17 +40,18 @@ namespace REngine {
 
         // Load custom font if specified
         if (fontPath) {
-            ImFont* font = io.Fonts->AddFontFromFileTTF(fontPath, 16.0f);
+            const ImFont* font = io.Fonts->AddFontFromFileTTF(fontPath, 16.0f);
             IM_ASSERT(font != nullptr);
             // Recreate device objects if font was loaded
             m_ImGuiImpl->CreateDeviceObjects();
         }
 
         m_Initialized = true;
+
         return true;
     }
 
-    void ImguiBackend::NewFrame(Diligent::ISwapChain* swapChain) {
+    void ImguiBackend::NewFrame(const Diligent::ISwapChain* swapChain) const {
         if (!m_Initialized) return;
 
         const auto& SCDesc = swapChain->GetDesc();
@@ -80,7 +80,7 @@ namespace REngine {
         // Ensure previous frame was properly ended
         if (ImGui::GetCurrentContext() && ImGui::GetFrameCount() > 0) {
             if (!ImGui::GetIO().WantCaptureMouse && !ImGui::GetIO().WantCaptureKeyboard) {
-                //ImGui::EndFrame();
+                ImGui::EndFrame();
             }
         }
 
@@ -113,10 +113,36 @@ namespace REngine {
     }
 
 
-    bool ImguiBackend::HandleEvent(const void* eventData) const {
-        if (!m_Initialized) return false;
+    void ImguiBackend::ProcessSDLEvent(const SDL_Event* event) const {
+        if (!m_Initialized) return;
 
-        return false;
+        ImGuiIO& io = ImGui::GetIO();
+        switch (event->type) {
+            case SDL_MOUSEMOTION:
+                io.AddMousePosEvent((float)event->motion.x, (float)event->motion.y);
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+            case SDL_MOUSEBUTTONUP: {
+                int button = -1;
+                if (event->button.button == SDL_BUTTON_LEFT) button = 0;
+                if (event->button.button == SDL_BUTTON_RIGHT) button = 1;
+                if (event->button.button == SDL_BUTTON_MIDDLE) button = 2;
+                if (button != -1)
+                    io.AddMouseButtonEvent(button, event->type == SDL_MOUSEBUTTONDOWN);
+                break;
+            }
+            case SDL_MOUSEWHEEL:
+                io.AddMouseWheelEvent((float)event->wheel.x, (float)event->wheel.y);
+                break;
+            case SDL_KEYDOWN:
+            case SDL_KEYUP:
+                // Handle keyboard events
+                break;
+            case SDL_TEXTINPUT:
+                io.AddInputCharactersUTF8(event->text.text);
+                break;
+            default: break;
+        }
     }
 
     void ImguiBackend::Shutdown() {

@@ -28,7 +28,7 @@ namespace REngine {
         }
 
         // Platform-optimized flags
-        Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+        Uint32 flags = SDL_WINDOW_SHOWN;
 
         #if defined(__APPLE__)
         flags |= SDL_WINDOW_ALLOW_HIGHDPI;  // macOS Retina support
@@ -58,6 +58,7 @@ namespace REngine {
     void RWindows::Run() {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
+            m_Event = event;
             if (event.type == SDL_QUIT) {
                 m_quit = true;
             }
@@ -67,5 +68,9 @@ namespace REngine {
     bool RWindows::IsRunning() const {
         return !m_quit;
 
+    }
+
+    const SDL_Event *RWindows::SDL_GetEvent() const {
+        return &m_Event;
     }
 }

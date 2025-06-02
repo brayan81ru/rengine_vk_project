@@ -17,7 +17,9 @@ namespace REngine {
     public:
         RRenderer(RRenderAPI RenderApi, Diligent::NativeWindow NativeWindowHandle);
 
-        void RenderTestUI(float fps) const;
+        void RenderStatsUI(float fps, float frameTime) const;
+
+        void ProcessStatsUIEvents(const SDL_Event *event) const;
 
         void Clear() const;
         void Frame() const;

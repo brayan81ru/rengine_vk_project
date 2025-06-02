@@ -16,7 +16,8 @@ int main() {
         window.Run();
         RTime::Update();
         renderer.Clear();
-        renderer.RenderTestUI(RTime::GetFPS());
+        renderer.RenderStatsUI(RTime::GetFPS(),RTime::GetFrameTimeMS());
+        renderer.ProcessStatsUIEvents(window.SDL_GetEvent());
         renderer.Frame();
     }
 

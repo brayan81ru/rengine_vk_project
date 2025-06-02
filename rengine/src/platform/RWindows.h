@@ -24,7 +24,10 @@ namespace REngine {
         SDL_Window* m_Window = nullptr;
 
         bool m_Initialized = false;
+
+        const SDL_Event *SDL_GetEvent() const;
     private:
         bool m_quit = false;
+        SDL_Event m_Event;
     };
 }

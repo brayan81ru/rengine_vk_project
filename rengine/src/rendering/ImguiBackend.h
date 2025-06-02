@@ -3,9 +3,9 @@
 
 #include <RefCntAutoPtr.hpp>
 #include <ImGuiImplDiligent.hpp>
-#include <RenderDevice.h>
-#include <DeviceContext.h>
 #include <SwapChain.h>
+
+#include "SDL_events.h"
 
 namespace REngine {
 
@@ -17,21 +17,19 @@ namespace REngine {
         bool Initialize(
             Diligent::IRenderDevice* device,
             Diligent::IDeviceContext* context,
-            Diligent::ISwapChain* swapChain,
+            const Diligent::ISwapChain* swapChain,
             const char* fontPath = nullptr
         );
 
-        void NewFrame(Diligent::ISwapChain* swapChain);
+        void NewFrame(const Diligent::ISwapChain* swapChain) const;
 
         void BeginFrame(const Diligent::ISwapChain *swapChain) const;
 
         void EndFrame(Diligent::IDeviceContext *context) const;
 
-        void Render(Diligent::IDeviceContext* context);
         void Shutdown();
 
-        // Handle platform events (Windows, Linux, Mac)
-        bool HandleEvent(const void* eventData) const;
+        void ProcessSDLEvent(const SDL_Event *event) const;
 
     private:
         std::unique_ptr<Diligent::ImGuiImplDiligent> m_ImGuiImpl;

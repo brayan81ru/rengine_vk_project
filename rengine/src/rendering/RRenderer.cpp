@@ -36,17 +36,22 @@ namespace REngine {
         m_ImguiBackend->Initialize(m_pDevice, m_pImmediateContext, m_pSwapChain);
     }
 
-    void RRenderer::RenderTestUI(const float fps) const {
+    void RRenderer::RenderStatsUI(const float fps, const float frameTime) const {
         m_ImguiBackend->BeginFrame(m_pSwapChain);
-        ImGui::Begin("Hello World De Mierda");
+        ImGui::Begin("STATS");
         ImGui::Text("FPS: %.2f", fps);
+        ImGui::Text("Frametime(ms): %.2f", frameTime);
         ImGui::End();
         m_ImguiBackend->EndFrame(m_pImmediateContext);
     }
 
+    void RRenderer::ProcessStatsUIEvents(const SDL_Event *event) const {
+        m_ImguiBackend->ProcessSDLEvent(event);
+    }
+
     void RRenderer::Clear() const {
 
-        constexpr float ClearColor[] = {1.0f, 0.f, 0.f, 1.0f};
+        constexpr float ClearColor[] = {0.f, 0.f, 0.f, 1.0f};
 
         // 1. Get views
         Diligent::ITextureView* pRTV = m_pSwapChain->GetCurrentBackBufferRTV();
