@@ -5,6 +5,7 @@
 #include <EngineFactoryOpenGL.h>
 #include <EngineFactoryVk.h>
 #include <RefCntAutoPtr.hpp>
+#include <imgui.h>
 
 
 namespace REngine {
@@ -30,7 +31,17 @@ namespace REngine {
             };
         }
 
+        // Initialization
+        m_ImguiBackend = new ImguiBackend();
+        m_ImguiBackend->Initialize(m_pDevice, m_pImmediateContext, m_pSwapChain);
+    }
 
+    void RRenderer::RenderTestUI(const float fps) const {
+        m_ImguiBackend->BeginFrame(m_pSwapChain);
+        ImGui::Begin("Hello World De Mierda");
+        ImGui::Text("FPS: %.2f", fps);
+        ImGui::End();
+        m_ImguiBackend->EndFrame(m_pImmediateContext);
     }
 
     void RRenderer::Clear() const {

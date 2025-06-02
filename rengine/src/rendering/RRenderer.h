@@ -2,6 +2,7 @@
 #include <NativeWindow.h>
 #include <RefCntAutoPtr.hpp>
 #include <RenderDevice.h>
+#include <rendering/ImguiBackend.h>
 
 
 namespace REngine {
@@ -16,6 +17,7 @@ namespace REngine {
     public:
         RRenderer(RRenderAPI RenderApi, Diligent::NativeWindow NativeWindowHandle);
 
+        void RenderTestUI(float fps) const;
 
         void Clear() const;
         void Frame() const;
@@ -26,6 +28,7 @@ namespace REngine {
         Diligent::RefCntAutoPtr<Diligent::IRenderDevice>  m_pDevice;
         Diligent::RefCntAutoPtr<Diligent::IDeviceContext> m_pImmediateContext;
         Diligent::RefCntAutoPtr<Diligent::ISwapChain>     m_pSwapChain;
+        ImguiBackend *m_ImguiBackend;
 
         void InitializeRendererD3D11();
 

@@ -1,47 +1,41 @@
-﻿#pragma once
-#include <memory>
-#include <DiligentCore/Common/interface/RefCntAutoPtr.hpp>
-#include <DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h>
-#include <DiligentCore/Graphics/GraphicsEngine/interface/DeviceContext.h>
-#include <DiligentCore/Graphics/GraphicsEngine/interface/SwapChain.h>
-#include <DiligentTools/Imgui/interface/ImGuiImplDiligent.hpp>
-#include <imgui.h>
+﻿// engine/src/renderer/ImguiBackend.h
+#pragma once
 
-// Forward declarations
-namespace Diligent {
-    class ImGuiImplWin32;
-}
+#include <RefCntAutoPtr.hpp>
+#include <ImGuiImplDiligent.hpp>
+#include <RenderDevice.h>
+#include <DeviceContext.h>
+#include <SwapChain.h>
 
 namespace REngine {
+
     class ImguiBackend {
     public:
+        ImguiBackend();
         ~ImguiBackend();
 
-        void Initialize(
-            Diligent::IRenderDevice* pDevice,
-            Diligent::ISwapChain* pSwapChain,
-            void* pNativeWindow,
-            Diligent::TEXTURE_FORMAT BackBufferFmt = Diligent::TEX_FORMAT_RGBA8_UNORM,
-            Diligent::TEXTURE_FORMAT DepthBufferFmt = Diligent::TEX_FORMAT_UNKNOWN
+        bool Initialize(
+            Diligent::IRenderDevice* device,
+            Diligent::IDeviceContext* context,
+            Diligent::ISwapChain* swapChain,
+            const char* fontPath = nullptr
         );
 
-        void NewFrame();
-        void Render(Diligent::IDeviceContext* pContext);
-        void ProcessInputEvent(void* event);
+        void NewFrame(Diligent::ISwapChain* swapChain);
 
-        static void SetDarkTheme();
-        void EnableDocking(bool enable);
+        void BeginFrame(const Diligent::ISwapChain *swapChain) const;
+
+        void EndFrame(Diligent::IDeviceContext *context) const;
+
+        void Render(Diligent::IDeviceContext* context);
+        void Shutdown();
+
+        // Handle platform events (Windows, Linux, Mac)
+        bool HandleEvent(const void* eventData) const;
 
     private:
-        void InitializePlatformBackend();
-        void ShutdownPlatformBackend();
-
-        Diligent::RefCntAutoPtr<Diligent::ImGuiImplDiligent> m_DiligentBackend;
-        ImGuiContext* m_Context = nullptr;
-        void* m_pPlatformHandle = nullptr;
-
-#if defined(_WIN32)
-        Diligent::RefCntAutoPtr<Diligent::ImGuiImplWin32> m_pWin32Impl;
-#endif
+        std::unique_ptr<Diligent::ImGuiImplDiligent> m_ImGuiImpl;
+        bool m_Initialized = false;
     };
+
 } // namespace REngine

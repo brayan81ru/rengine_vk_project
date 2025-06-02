@@ -1,100 +1,129 @@
-﻿#include "ImguiBackend.h"
-#include <DiligentTools/Imgui/interface/ImGuiImplWin32.hpp>
-
-// Platform-specific includes
-#if defined(_WIN32)
-#include <Windows.h>
-#endif
+﻿// engine/src/renderer/ImguiBackend.cpp
+#include "ImguiBackend.h"
+#include "imgui.h"
 
 namespace REngine {
+    ImguiBackend::ImguiBackend() = default;
 
-ImguiBackend::~ImguiBackend() {
-    ShutdownPlatformBackend();
-    if (m_Context) {
-        ImGui::DestroyContext(m_Context);
+    ImguiBackend::~ImguiBackend() {
+        Shutdown();
     }
-}
 
-void ImguiBackend::Initialize(
-    Diligent::IRenderDevice* pDevice,
-    Diligent::ISwapChain* pSwapChain,
-    void* pNativeWindow,
-    Diligent::TEXTURE_FORMAT BackBufferFmt,
-    Diligent::TEXTURE_FORMAT DepthBufferFmt)
-{
-    m_pPlatformHandle = pNativeWindow;
-    m_Context = ImGui::CreateContext();
-    ImGui::SetCurrentContext(m_Context);
+    bool ImguiBackend::Initialize(
+        Diligent::IRenderDevice* device,
+        Diligent::IDeviceContext* context,
+        Diligent::ISwapChain* swapChain,
+        const char* fontPath
+    ) {
+        if (m_Initialized) {
+            return true;
+        }
 
-    // Initialize Diligent backend
-    Diligent::ImGuiDiligentCreateInfo ImguiDiligentCI;
-    ImguiDiligentCI.pDevice = pDevice;
-    ImguiDiligentCI.BackBufferFmt = BackBufferFmt;
-    ImguiDiligentCI.DepthBufferFmt = DepthBufferFmt;
-    m_DiligentBackend.Attach(Diligent::ImGuiImplDiligent::Create(ImguiDiligentCI));
+        // Initialize ImGui context
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
 
-    InitializePlatformBackend();
-    SetDarkTheme();
-    ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = true;
-}
+        // Setup style
+        ImGui::StyleColorsDark();
 
-void ImguiBackend::InitializePlatformBackend() {
-#if defined(_WIN32)
-    if (m_pPlatformHandle) {
-        m_pWin32Impl.Attach(Diligent::ImGuiImplWin32::Create(
-            Diligent::ImGuiImplWin32::CreateInfo{static_cast<HWND>(m_pPlatformHandle)}));
+        // Initialize Diligent ImGui implementation
+        const auto& SCDesc = swapChain->GetDesc();
+        Diligent::ImGuiDiligentCreateInfo CI;
+        CI.pDevice = device;
+        CI.BackBufferFmt = SCDesc.ColorBufferFormat;
+        CI.DepthBufferFmt = SCDesc.DepthBufferFormat;
+        CI.InitialVertexBufferSize = 1024;  // Adjust as needed
+        CI.InitialIndexBufferSize = 2048;   // Adjust as needed
+
+        m_ImGuiImpl = std::make_unique<Diligent::ImGuiImplDiligent>(CI);
+
+        // Load custom font if specified
+        if (fontPath) {
+            ImFont* font = io.Fonts->AddFontFromFileTTF(fontPath, 16.0f);
+            IM_ASSERT(font != nullptr);
+            // Recreate device objects if font was loaded
+            m_ImGuiImpl->CreateDeviceObjects();
+        }
+
+        m_Initialized = true;
+        return true;
     }
-#endif
-}
 
-void ImguiBackend::ShutdownPlatformBackend() {
-#if defined(_WIN32)
-    if (m_pWin32Impl) {
-        m_pWin32Impl->Shutdown();
-        m_pWin32Impl.Release();
+    void ImguiBackend::NewFrame(Diligent::ISwapChain* swapChain) {
+        if (!m_Initialized) return;
+
+        const auto& SCDesc = swapChain->GetDesc();
+
+        ImGuiIO& io = ImGui::GetIO();
+
+        io.DisplaySize = ImVec2(
+            static_cast<float>(SCDesc.Width),
+            static_cast<float>(SCDesc.Height)
+        );
+
+
+        // 2. Begin Diligent frame
+        m_ImGuiImpl->NewFrame(
+            SCDesc.Width,
+            SCDesc.Height,
+            SCDesc.PreTransform
+        );
+
+        ImGui::NewFrame();
     }
-#endif
-}
 
-void ImguiBackend::NewFrame() {
-#if defined(_WIN32)
-    if (m_pWin32Impl) {
-        m_pWin32Impl->NewFrame();
+    void ImguiBackend::BeginFrame(const Diligent::ISwapChain* swapChain) const {
+        if (!m_Initialized) return;
+
+        // Ensure previous frame was properly ended
+        if (ImGui::GetCurrentContext() && ImGui::GetFrameCount() > 0) {
+            if (!ImGui::GetIO().WantCaptureMouse && !ImGui::GetIO().WantCaptureKeyboard) {
+                //ImGui::EndFrame();
+            }
+        }
+
+        // Update display size
+        const auto& SCDesc = swapChain->GetDesc();
+        ImGuiIO& io = ImGui::GetIO();
+        io.DisplaySize = ImVec2(
+            static_cast<float>(SCDesc.Width),
+            static_cast<float>(SCDesc.Height)
+        );
+
+        // Begin new frame
+        m_ImGuiImpl->NewFrame(
+            SCDesc.Width,
+            SCDesc.Height,
+            SCDesc.PreTransform
+        );
     }
-#endif
 
-    if (m_DiligentBackend) {
-        m_DiligentBackend->NewFrame();
+    void ImguiBackend::EndFrame(Diligent::IDeviceContext* context) const {
+        if (!m_Initialized) return;
+
+        // Only render if we have a valid frame
+        if (ImGui::GetCurrentContext() && ImGui::GetFrameCount() > 0) {
+            ImGui::Render();
+            if (ImGui::GetDrawData()) {
+                m_ImGuiImpl->Render(context);
+            }
+        }
     }
-    ImGui::NewFrame();
-}
 
-void ImguiBackend::Render(Diligent::IDeviceContext* pContext) {
-    ImGui::Render();
-    if (m_DiligentBackend) {
-        m_DiligentBackend->Render(pContext);
+
+    bool ImguiBackend::HandleEvent(const void* eventData) const {
+        if (!m_Initialized) return false;
+
+        return false;
     }
-}
 
-void ImguiBackend::ProcessInputEvent(void* event) {
-    // Implement platform-specific event handling if needed
-}
-
-void ImguiBackend::SetDarkTheme() {
-    ImGui::StyleColorsDark();
-    auto& style = ImGui::GetStyle();
-    style.WindowRounding = 5.0f;
-    style.FrameRounding = 3.0f;
-    style.Colors[ImGuiCol_WindowBg].w = 0.85f;
-}
-
-void ImguiBackend::EnableDocking(bool enable) {
-    auto& io = ImGui::GetIO();
-    if (enable) {
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    } else {
-        io.ConfigFlags &= ~ImGuiConfigFlags_DockingEnable;
+    void ImguiBackend::Shutdown() {
+        if (!m_Initialized) return;
+        m_ImGuiImpl->InvalidateDeviceObjects();
+        m_ImGuiImpl.reset();
+        ImGui::DestroyContext();
+        m_Initialized = false;
     }
-}
-
 } // namespace REngine

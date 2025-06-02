@@ -15,8 +15,8 @@ int main() {
     while (window.IsRunning()) {
         window.Run();
         RTime::Update();
-        std::cout << RTime::GetFPS() << std::endl;
         renderer.Clear();
+        renderer.RenderTestUI(RTime::GetFPS());
         renderer.Frame();
     }
 
