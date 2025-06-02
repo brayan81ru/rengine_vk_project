@@ -10,14 +10,14 @@ namespace REngine {
         SDL_GetWindowWMInfo(window, &wmInfo);
         Diligent::NativeWindow nativeWindow;
 
-#ifdef _WIN32
+        #ifdef _WIN32
         nativeWindow.hWnd = wmInfo.info.win.window;
-#elif __APPLE__
+        #elif __APPLE__
         nativeWindow.hWnd = wmInfo.info.cocoa.window;// macOS impl
-#elif __linux__
+        #elif __linux__
         nativeWindow.hWnd = wmInfo.info.x11.window;
         #nativeWindow.pDisplay = wmInfo.info.x11.display;
-#endif
+        #endif
 
         return nativeWindow;
     }
@@ -45,6 +45,8 @@ namespace REngine {
             throw std::runtime_error(SDL_GetError());
         }
 
+        m_quit = false;
+
         m_Initialized = true;
     }
 
@@ -53,12 +55,17 @@ namespace REngine {
         if (m_Initialized) SDL_Quit();
     }
 
-    void RWindows::PollEvents(bool& shouldQuit) {
+    void RWindows::Run() {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
-                shouldQuit = true;
+                m_quit = true;
             }
         }
+    }
+
+    bool RWindows::IsRunning() const {
+        return !m_quit;
+
     }
 }

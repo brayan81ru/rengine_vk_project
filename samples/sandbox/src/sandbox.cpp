@@ -2,36 +2,20 @@
 #include <core/REngineCore.h>
 
 int main() {
-
-    RString pepe = "Hola pepe!!!";
-
-    RString pepe2 = "Hola pepe2!!!";
-
-    pepe = pepe2;
-
-    pepe = RString::Format("Pepep is {} jajaja.",pepe.c_str());
-
-    std::cout << pepe.c_str()<< std::endl;
-
-    return 0;
-
-
     REngine::REngineCore::Init();
 
-    // 1. Create window.
     RWindows window("Sandbox", 1280, 720);
 
     auto sdlWindow = window.GetNativeWindow();
 
     const Diligent::NativeWindow nativeWindow = RWindows::SDLWindowToNativeWindow(sdlWindow);
 
-    RRenderer renderer(REngine::RRenderAPI::OpenGL, nativeWindow);
+    RRenderer renderer(REngine::RRenderAPI::Direct3D12, nativeWindow);
 
-    // 3. Main loop.
-    bool shouldQuit = false;
-
-    while (!shouldQuit) {
-        window.PollEvents(shouldQuit);
+    while (window.IsRunning()) {
+        window.Run();
+        RTime::Update();
+        std::cout << RTime::GetFPS() << std::endl;
         renderer.Clear();
         renderer.Frame();
     }

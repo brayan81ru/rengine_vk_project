@@ -1,10 +1,11 @@
 ﻿#include "RRenderer.h"
 #include <iostream>
-#include "EngineFactoryD3D11.h"
-#include "EngineFactoryD3D12.h"
-#include "EngineFactoryOpenGL.h"
-#include "EngineFactoryVk.h"
-#include "RefCntAutoPtr.hpp"
+#include <EngineFactoryD3D11.h>
+#include <EngineFactoryD3D12.h>
+#include <EngineFactoryOpenGL.h>
+#include <EngineFactoryVk.h>
+#include <RefCntAutoPtr.hpp>
+
 
 namespace REngine {
     RRenderer::RRenderer(const RRenderAPI RenderApi, const Diligent::NativeWindow NativeWindowHandle) {
@@ -28,6 +29,8 @@ namespace REngine {
                 std::cout << "Render API not supported" << std::endl;
             };
         }
+
+
     }
 
     void RRenderer::Clear() const {
@@ -51,6 +54,8 @@ namespace REngine {
         m_pImmediateContext->ClearDepthStencil(pDSV,
             Diligent::CLEAR_DEPTH_FLAG, 1.f, 0,
             Diligent::RESOURCE_STATE_TRANSITION_MODE_NONE);
+
+
     }
 
     void RRenderer::Frame() const {

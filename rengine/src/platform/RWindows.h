@@ -2,11 +2,11 @@
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <string>
-#include "BasicTypes.h"
 #include "NativeWindow.h"
 
 namespace REngine {
     class RWindows {
+
     public:
 
         static Diligent::NativeWindow SDLWindowToNativeWindow(SDL_Window* window);
@@ -15,14 +15,16 @@ namespace REngine {
 
         ~RWindows();
 
-        SDL_Window* GetNativeWindow() const { return m_Window; }
+        [[nodiscard]] SDL_Window* GetNativeWindow() const { return m_Window; }
 
-        void PollEvents(bool& shouldQuit);
+        void Run();
+
+        [[nodiscard]] bool IsRunning() const;
 
         SDL_Window* m_Window = nullptr;
 
         bool m_Initialized = false;
     private:
-
+        bool m_quit = false;
     };
 }

@@ -1,7 +1,8 @@
 ﻿#pragma once
-#include "NativeWindow.h"
-#include "RefCntAutoPtr.hpp"
-#include "RenderDevice.h"
+#include <NativeWindow.h>
+#include <RefCntAutoPtr.hpp>
+#include <RenderDevice.h>
+
 
 namespace REngine {
     enum class RRenderAPI {
@@ -14,6 +15,8 @@ namespace REngine {
     class RRenderer {
     public:
         RRenderer(RRenderAPI RenderApi, Diligent::NativeWindow NativeWindowHandle);
+
+
         void Clear() const;
         void Frame() const;
     private:

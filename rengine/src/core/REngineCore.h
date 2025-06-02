@@ -1,14 +1,13 @@
 ﻿#pragma once
 #include <platform/RWindows.h>
 #include <rendering/RRenderer.h>
-#include <core/RString.h>
+#include <core/RTime.h>
 
 using REngine::RRenderer;
 
 using REngine::RWindows;
 
-using REngine::RString;
-
+using REngine::RTime;
 
 namespace REngine {
     class REngineCore {
