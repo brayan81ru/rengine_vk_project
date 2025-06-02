@@ -6,12 +6,51 @@
 
 
 namespace REngine {
-    enum class RRenderAPI {
-        OpenGL,
-        Direct3D11,
-        Direct3D12,
-        Vulkan
+
+    struct RRenderAPI {
+        // The actual enum values
+        enum Value {
+            OpenGL,
+            Direct3D11,
+            Direct3D12,
+            Vulkan,
+            Count  // Useful for iteration/validation
+        };
+
+        Value value;
+
+        // Implicit conversion
+        constexpr RRenderAPI(Value v = OpenGL) : value(v) {}
+        operator Value() const { return value; }
+
+        // Disallow implicit conversions from other types
+        explicit operator bool() = delete;
+
+        // String conversion
+        const char* ToString() const {
+            static const char* names[] = {
+                "OpenGL",
+                "Direct3D11",
+                "Direct3D12",
+                "Vulkan"
+            };
+            return (value < Count) ? names[value] : "Unknown";
+        }
+
+        // Optional bonus methods
+        static constexpr size_t CountValues() { return Count; }
+        static const char* GetName(size_t index) {
+            static const char* names[] = {
+                "OpenGL",
+                "Direct3D11",
+                "Direct3D12",
+                "Vulkan"
+            };
+            return (index < Count) ? names[index] : "Unknown";
+        }
     };
+
+
 
     class RRenderer {
     public:

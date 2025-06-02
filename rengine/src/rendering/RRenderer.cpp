@@ -38,7 +38,9 @@ namespace REngine {
 
     void RRenderer::RenderStatsUI(const float fps, const float frameTime) const {
         m_ImguiBackend->BeginFrame(m_pSwapChain);
+
         ImGui::Begin("STATS");
+        ImGui::Text("%s",m_RenderAPI.ToString());
         ImGui::Text("FPS: %.2f", fps);
         ImGui::Text("Frametime(ms): %.2f", frameTime);
         ImGui::End();
@@ -70,8 +72,6 @@ namespace REngine {
         m_pImmediateContext->ClearDepthStencil(pDSV,
             Diligent::CLEAR_DEPTH_FLAG, 1.f, 0,
             Diligent::RESOURCE_STATE_TRANSITION_MODE_NONE);
-
-
     }
 
     void RRenderer::Frame() const {
