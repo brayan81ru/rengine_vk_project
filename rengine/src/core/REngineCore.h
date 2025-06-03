@@ -11,6 +11,8 @@
 #include <core/Texture.h>
 #include <core/Shader.h>
 #include <core/Buffer.h>
+#include <core/Material.h>
+#include <core/ResourceManager.h>
 
 using REngine::RRenderer;
 
@@ -35,6 +37,10 @@ using REngine::Texture;
 using REngine::Shader;
 
 using REngine::Buffer;
+
+using REngine::Material;
+
+using REngine::ResourceManager;
 
 namespace REngine {
     class REngineCore {
