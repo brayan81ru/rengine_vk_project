@@ -74,7 +74,11 @@ namespace REngine {
     }
 
     void RRenderer::Frame() const {
-        m_pSwapChain->Present();
+        m_pSwapChain->Present(m_Vsync ? 1 : 0);
+    }
+
+    void RRenderer::SetVSync(const bool vsync) {
+        m_Vsync = vsync;
     }
 
     void RRenderer::InitializeRendererD3D11() {
@@ -83,6 +87,7 @@ namespace REngine {
         pFactoryD3D11->CreateDeviceAndContextsD3D11(EngineCI, &m_pDevice, &m_pImmediateContext);
         const Diligent::Win32NativeWindow Window{m_Window};
         pFactoryD3D11->CreateSwapChainD3D11(m_pDevice, m_pImmediateContext, SCDesc, Diligent::FullScreenModeDesc{}, Window, &m_pSwapChain);
+        m_pEngineFactory = pFactoryD3D11;
     }
 
     void RRenderer::InitializeRendererD3D12() {
@@ -91,6 +96,7 @@ namespace REngine {
         pFactoryD3D12->CreateDeviceAndContextsD3D12(EngineCI, &m_pDevice, &m_pImmediateContext);
         const Diligent::Win32NativeWindow Window{m_Window};
         pFactoryD3D12->CreateSwapChainD3D12(m_pDevice, m_pImmediateContext, SCDesc, Diligent::FullScreenModeDesc{}, Window, &m_pSwapChain);
+        m_pEngineFactory = pFactoryD3D12;
     }
 
     void RRenderer::InitializeRendererVulkan() {
@@ -99,6 +105,7 @@ namespace REngine {
         pFactoryVk->CreateDeviceAndContextsVk(EngineCI, &m_pDevice, &m_pImmediateContext);
         const Diligent::Win32NativeWindow Window{m_Window};
         pFactoryVk->CreateSwapChainVk(m_pDevice, m_pImmediateContext, SCDesc, Window, &m_pSwapChain);
+        m_pEngineFactory = pFactoryVk;
     }
 
     void RRenderer::InitializeRendererOpenGL() {
@@ -107,5 +114,7 @@ namespace REngine {
         const Diligent::Win32NativeWindow Window{m_Window};
         EngineCI.Window.hWnd = Window.hWnd;
         pFactoryOpenGL->CreateDeviceAndSwapChainGL(EngineCI, &m_pDevice, &m_pImmediateContext,SCDesc, &m_pSwapChain);
+        m_pEngineFactory = pFactoryOpenGL;
     }
+
 }

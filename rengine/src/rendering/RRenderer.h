@@ -62,7 +62,10 @@ namespace REngine {
 
         void Frame() const;
 
+        void SetVSync(bool vsync);
+
     private:
+        bool m_Vsync = true;
         Diligent::NativeWindow m_Window;
         RenderAPI m_RenderAPI = RenderAPI::OpenGL;
         Diligent::SwapChainDesc SCDesc;
@@ -70,6 +73,7 @@ namespace REngine {
         Diligent::RefCntAutoPtr<Diligent::IDeviceContext> m_pImmediateContext;
         Diligent::RefCntAutoPtr<Diligent::ISwapChain>     m_pSwapChain;
         ImguiBackend *m_ImguiBackend;
+        Diligent::IEngineFactory *m_pEngineFactory;
 
         void InitializeRendererD3D11();
 
@@ -79,5 +83,6 @@ namespace REngine {
 
         void InitializeRendererOpenGL();
 
+        void RecreateSwapChain();
     };
 }

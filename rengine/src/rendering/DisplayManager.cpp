@@ -56,4 +56,31 @@ namespace REngine {
 
         return -1;
     }
+
+    bool DisplayManager::ApplyDisplayMode(SDL_Window* window, const DisplayMode& mode, const FullScreenMode &fullScreenMode) {
+        SDL_DisplayMode sdlMode;
+
+        SDL_GetCurrentDisplayMode(0, &sdlMode); // Get current to copy format
+
+        sdlMode.w = mode.width;
+        sdlMode.h = mode.height;
+        sdlMode.refresh_rate = mode.refreshRate;
+
+        if (SDL_SetWindowDisplayMode(window, &sdlMode) != 0) {
+            return false;
+        }
+
+        auto flags = SDL_GetWindowFlags(window);
+
+        if (fullScreenMode == FullScreenMode::ExclusiveFullScreen) {
+            flags = SDL_WINDOW_FULLSCREEN;
+        }
+
+        if (fullScreenMode == FullScreenMode::FullScreenWindow) {
+            flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+        }
+
+        return SDL_SetWindowFullscreen(window, flags) == 0;
+    }
+
 }

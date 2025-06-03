@@ -15,7 +15,6 @@ namespace REngine {
         enum Value {
             ExclusiveFullScreen,
             FullScreenWindow,
-            MaximizedWindow,
             Windowed,
             Count
         };
@@ -59,7 +58,7 @@ namespace REngine {
         static DisplayMode GetCurrentMode(int displayIndex = 0);
         static DisplayMode GetDesktopMode(int displayIndex = 0);
         static int FindDisplayMode(int width, int height, int refreshRate);
-
+        static bool ApplyDisplayMode(SDL_Window *window, const DisplayMode &mode, const FullScreenMode &fullScreenMode);
     private:
         static std::vector<DisplayMode> modes;  // Add this line
     };

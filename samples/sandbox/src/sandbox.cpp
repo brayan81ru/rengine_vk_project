@@ -6,14 +6,19 @@ int main() {
 
     // Initialize Window&Rendering
     RWindows window("Sandbox", 1280, 720);
+
     auto sdlWindow = window.GetNativeWindow();
+
     const Diligent::NativeWindow nativeWindow = RWindows::SDLWindowToNativeWindow(sdlWindow);
-    RRenderer renderer(REngine::RenderAPI::Direct3D12, nativeWindow);
 
     // Display Manager Initializer.
     DisplayManager::Initialize();
-    auto modes = DisplayManager::GetAvailableModes();
 
+    auto modes = DisplayManager::GetAvailableModes(0);
+
+    DisplayManager::ApplyDisplayMode(sdlWindow,DisplayManager::GetDesktopMode(0),REngine::FullScreenMode::ExclusiveFullScreen);
+
+    RRenderer renderer(REngine::RenderAPI::Direct3D12, nativeWindow);
 
     while (window.IsRunning()) {
         window.Run();
