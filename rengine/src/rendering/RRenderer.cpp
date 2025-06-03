@@ -8,6 +8,7 @@
 #include <imgui.h>
 
 namespace REngine {
+
     static const char* VSSource = R"(
     struct PSInput
     {
@@ -33,8 +34,8 @@ namespace REngine {
     }
     )";
 
-        // Pixel shader simply outputs interpolated vertex color
-        static const char* PSSource = R"(
+    // Pixel shader simply outputs interpolated vertex color
+    static const char* PSSource = R"(
     struct PSInput
     {
         float4 Pos   : SV_POSITION;
