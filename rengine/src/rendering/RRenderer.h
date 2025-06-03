@@ -52,6 +52,10 @@ namespace REngine {
 
     class RRenderer {
     public:
+        void InitializeTriangleResources();
+
+        void RenderTriangle();
+
         RRenderer(RenderAPI RenderApi, Diligent::NativeWindow NativeWindowHandle);
 
         void RenderStatsUI(float fps, float frameTime, DisplayMode displayMode, bool vSync) const;
@@ -74,6 +78,7 @@ namespace REngine {
         Diligent::RefCntAutoPtr<Diligent::ISwapChain>     m_pSwapChain;
         ImguiBackend *m_ImguiBackend;
         Diligent::IEngineFactory *m_pEngineFactory;
+        Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_pPSO;
 
         void InitializeRendererD3D11();
 
