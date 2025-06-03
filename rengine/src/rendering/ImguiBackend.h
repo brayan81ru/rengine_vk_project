@@ -21,8 +21,6 @@ namespace REngine {
             const char* fontPath = nullptr
         );
 
-        void NewFrame(const Diligent::ISwapChain* swapChain) const;
-
         void BeginFrame(const Diligent::ISwapChain *swapChain) const;
 
         void EndFrame(Diligent::IDeviceContext *context) const;

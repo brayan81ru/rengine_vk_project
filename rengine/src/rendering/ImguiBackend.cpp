@@ -43,35 +43,14 @@ namespace REngine {
             const ImFont* font = io.Fonts->AddFontFromFileTTF(fontPath, 16.0f);
             IM_ASSERT(font != nullptr);
             // Recreate device objects if font was loaded
-            m_ImGuiImpl->CreateDeviceObjects();
+            //m_ImGuiImpl->CreateDeviceObjects();
         }
+
+        m_ImGuiImpl->CreateDeviceObjects();
 
         m_Initialized = true;
 
         return true;
-    }
-
-    void ImguiBackend::NewFrame(const Diligent::ISwapChain* swapChain) const {
-        if (!m_Initialized) return;
-
-        const auto& SCDesc = swapChain->GetDesc();
-
-        ImGuiIO& io = ImGui::GetIO();
-
-        io.DisplaySize = ImVec2(
-            static_cast<float>(SCDesc.Width),
-            static_cast<float>(SCDesc.Height)
-        );
-
-
-        // 2. Begin Diligent frame
-        m_ImGuiImpl->NewFrame(
-            SCDesc.Width,
-            SCDesc.Height,
-            SCDesc.PreTransform
-        );
-
-        ImGui::NewFrame();
     }
 
     void ImguiBackend::BeginFrame(const Diligent::ISwapChain* swapChain) const {
@@ -106,6 +85,11 @@ namespace REngine {
         // Only render if we have a valid frame
         if (ImGui::GetCurrentContext() && ImGui::GetFrameCount() > 0) {
             ImGui::Render();
+
+            ImDrawData* draw_data = ImGui::GetDrawData();
+
+            draw_data->ScaleClipRects(ImGui::GetIO().DisplayFramebufferScale);
+
             if (ImGui::GetDrawData()) {
                 m_ImGuiImpl->Render(context);
             }
@@ -117,10 +101,16 @@ namespace REngine {
         if (!m_Initialized) return;
 
         ImGuiIO& io = ImGui::GetIO();
+
         switch (event->type) {
-            case SDL_MOUSEMOTION:
-                io.AddMousePosEvent((float)event->motion.x, (float)event->motion.y);
+            case SDL_MOUSEMOTION: {
+                io.AddMousePosEvent(
+                    event->motion.x,
+                    event->motion.y
+                );
                 break;
+            }
+
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP: {
                 int button = -1;

@@ -23,6 +23,13 @@ namespace REngine {
     }
 
     RWindows::RWindows(const std::string& title, int width, int height) {
+
+        SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
+
+        //SDL_SetHint(SDL_HINT_WINDOWS_DPI_SCALING, "1");
+
+        //SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_SCALING, "1");
+
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) {
             throw std::runtime_error(SDL_GetError());
         }

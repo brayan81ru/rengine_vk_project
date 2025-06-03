@@ -2,7 +2,7 @@
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <string>
-#include "NativeWindow.h"
+#include <NativeWindow.h>
 
 namespace REngine {
     class RWindows {
@@ -26,6 +26,7 @@ namespace REngine {
         bool m_Initialized = false;
 
         const SDL_Event *SDL_GetEvent() const;
+
     private:
         bool m_quit = false;
         SDL_Event m_Event;

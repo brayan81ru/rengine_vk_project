@@ -35,11 +35,13 @@ namespace REngine {
         m_ImguiBackend->Initialize(m_pDevice, m_pImmediateContext, m_pSwapChain);
     }
 
-    void RRenderer::RenderStatsUI(const float fps, const float frameTime) const {
+    void RRenderer::RenderStatsUI(const float fps, const float frameTime, DisplayMode displayMode, bool vSync) const {
         m_ImguiBackend->BeginFrame(m_pSwapChain);
 
-        ImGui::Begin("STATS");
+        ImGui::Begin("STATS",0);
         ImGui::Text("%s",m_RenderAPI.ToString());
+        ImGui::Text("%s",displayMode.ToString());
+        ImGui::Text("V-Sync: %s",vSync ? "Enabled" : "Disabled");
         ImGui::Text("FPS: %.2f", fps);
         ImGui::Text("Frametime(ms): %.2f", frameTime);
         ImGui::End();

@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include <vector>
 #include <SDL.h>
+#include <string>
+#include <platform/RWindows.h>
 
 namespace REngine {
 
@@ -9,6 +11,12 @@ namespace REngine {
         int height;
         int refreshRate;
         Uint32 format;
+
+        const char* ToString() const {
+            thread_local static char buffer[32]; // Thread-safe storage
+            snprintf(buffer, sizeof(buffer), "%dx%dx%d", width, height, refreshRate);
+            return buffer;
+        }
     };
 
     struct FullScreenMode {
@@ -59,6 +67,7 @@ namespace REngine {
         static DisplayMode GetDesktopMode(int displayIndex = 0);
         static int FindDisplayMode(int width, int height, int refreshRate);
         static bool ApplyDisplayMode(SDL_Window *window, const DisplayMode &mode, const FullScreenMode &fullScreenMode);
+        static bool ApplyDisplayMode(const REngine::RWindows *window, const DisplayMode &mode, const FullScreenMode &fullScreenMode);
     private:
         static std::vector<DisplayMode> modes;  // Add this line
     };

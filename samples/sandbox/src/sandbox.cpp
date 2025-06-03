@@ -1,7 +1,6 @@
 ﻿#include <core/REngineCore.h>
 
 int main() {
-
     REngine::REngineCore::Init();
 
     // Initialize Window&Rendering
@@ -16,15 +15,18 @@ int main() {
 
     auto modes = DisplayManager::GetAvailableModes(0);
 
-    DisplayManager::ApplyDisplayMode(sdlWindow,DisplayManager::GetDesktopMode(0),REngine::FullScreenMode::ExclusiveFullScreen);
+    auto displayMode = DisplayManager::GetCurrentMode(0);
+    DisplayManager::ApplyDisplayMode(&window,displayMode,REngine::FullScreenMode::FullScreenWindow);
 
     RRenderer renderer(REngine::RenderAPI::Direct3D12, nativeWindow);
+
+    renderer.SetVSync(true);
 
     while (window.IsRunning()) {
         window.Run();
         RTime::Update();
         renderer.Clear();
-        renderer.RenderStatsUI(RTime::GetFPS(),RTime::GetFrameTimeMS());
+        renderer.RenderStatsUI(RTime::GetFPS(),RTime::GetFrameTimeMS(), displayMode, true);
         renderer.ProcessStatsUIEvents(window.SDL_GetEvent());
         renderer.Frame();
     }

@@ -83,4 +83,7 @@ namespace REngine {
         return SDL_SetWindowFullscreen(window, flags) == 0;
     }
 
+    bool DisplayManager::ApplyDisplayMode(const REngine::RWindows *window, const DisplayMode &mode, const FullScreenMode &fullScreenMode) {
+        return DisplayManager::ApplyDisplayMode(window->m_Window, mode, fullScreenMode);
+    }
 }
