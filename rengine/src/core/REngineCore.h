@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <platform/RWindows.h>
 #include <rendering/ImguiBackend.h>
+#include <rendering/DisplayManager.h>
 #include <rendering/RRenderer.h>
 #include <core/RTime.h>
 
@@ -11,6 +12,8 @@ using REngine::RWindows;
 using REngine::ImguiBackend;
 
 using REngine::RTime;
+
+using REngine::DisplayManager;
 
 
 

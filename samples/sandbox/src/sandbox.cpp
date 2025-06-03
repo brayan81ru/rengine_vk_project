@@ -1,16 +1,19 @@
-﻿#include <iostream>
-#include <core/REngineCore.h>
+﻿#include <core/REngineCore.h>
 
 int main() {
+
     REngine::REngineCore::Init();
 
+    // Initialize Window&Rendering
     RWindows window("Sandbox", 1280, 720);
-
     auto sdlWindow = window.GetNativeWindow();
-
     const Diligent::NativeWindow nativeWindow = RWindows::SDLWindowToNativeWindow(sdlWindow);
+    RRenderer renderer(REngine::RenderAPI::Direct3D12, nativeWindow);
 
-    RRenderer renderer(REngine::RRenderAPI::Direct3D12, nativeWindow);
+    // Display Manager Initializer.
+    DisplayManager::Initialize();
+    auto modes = DisplayManager::GetAvailableModes();
+
 
     while (window.IsRunning()) {
         window.Run();

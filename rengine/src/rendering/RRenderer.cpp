@@ -8,7 +8,7 @@
 #include <imgui.h>
 
 namespace REngine {
-    RRenderer::RRenderer(const RRenderAPI RenderApi, const Diligent::NativeWindow NativeWindowHandle) {
+    RRenderer::RRenderer(const RenderAPI RenderApi, const Diligent::NativeWindow NativeWindowHandle) {
         std::cout << "RRenderer::Init" << std::endl;
 
         m_Window = NativeWindowHandle;
@@ -17,13 +17,13 @@ namespace REngine {
 
         switch (RenderApi) {
 
-            case RRenderAPI::Direct3D11: InitializeRendererD3D11(); break;
+            case RenderAPI::Direct3D11: InitializeRendererD3D11(); break;
 
-            case RRenderAPI::Direct3D12: InitializeRendererD3D12(); break;
+            case RenderAPI::Direct3D12: InitializeRendererD3D12(); break;
 
-            case RRenderAPI::OpenGL: InitializeRendererOpenGL(); break;
+            case RenderAPI::OpenGL: InitializeRendererOpenGL(); break;
 
-            case RRenderAPI::Vulkan: InitializeRendererVulkan(); break;
+            case RenderAPI::Vulkan: InitializeRendererVulkan(); break;
 
             default: {
                 std::cout << "Render API not supported" << std::endl;
