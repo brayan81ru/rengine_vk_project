@@ -106,8 +106,6 @@ namespace REngine {
     };
 
 
-
-
     class RRenderer {
     public:
         RRenderer(RRenderAPI RenderApi, Diligent::NativeWindow NativeWindowHandle);
