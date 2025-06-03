@@ -1,6 +1,8 @@
-﻿// DisplayManager.cpp
-#include "DisplayManager.h"
+﻿#include "DisplayManager.h"
 #include <stdexcept>
+
+// Initialize the static member
+std::vector<DisplayMode> DisplayManager::modes;
 
 void DisplayManager::Initialize() {
     int displayCount = SDL_GetNumVideoDisplays();
@@ -8,10 +10,14 @@ void DisplayManager::Initialize() {
         throw std::runtime_error("No displays detected");
     }
 
+    modes.clear();  // Clear existing modes
+
     int modeCount = SDL_GetNumDisplayModes(0);
     for (int i = 0; i < modeCount; ++i) {
         SDL_DisplayMode mode;
-        SDL_GetDisplayMode(0, i, &mode);
+        if (SDL_GetDisplayMode(0, i, &mode)) {
+            throw std::runtime_error(SDL_GetError());
+        }
         modes.push_back({
             mode.w,
             mode.h,
@@ -27,12 +33,16 @@ const std::vector<DisplayMode>& DisplayManager::GetAvailableModes(int displayInd
 
 DisplayMode DisplayManager::GetCurrentMode(int displayIndex) {
     SDL_DisplayMode mode;
-    SDL_GetCurrentDisplayMode(displayIndex, &mode);
+    if (SDL_GetCurrentDisplayMode(displayIndex, &mode)) {
+        throw std::runtime_error(SDL_GetError());
+    }
     return { mode.w, mode.h, mode.refresh_rate, mode.format };
 }
 
 DisplayMode DisplayManager::GetDesktopMode(int displayIndex) {
     SDL_DisplayMode mode;
-    SDL_GetDesktopDisplayMode(displayIndex, &mode);
+    if (SDL_GetDesktopDisplayMode(displayIndex, &mode)) {
+        throw std::runtime_error(SDL_GetError());
+    }
     return { mode.w, mode.h, mode.refresh_rate, mode.format };
 }

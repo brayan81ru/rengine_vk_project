@@ -5,6 +5,7 @@ add_library(rengine STATIC
         src/core/REngineCore.cpp
         src/core/RTime.cpp
         src/rendering/ImguiBackend.cpp
+        src/rendering/DisplayManager.cpp
         src/rendering/RRenderer.cpp
         src/platform/RWindows.cpp
 )
