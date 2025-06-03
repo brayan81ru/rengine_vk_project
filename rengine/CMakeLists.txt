@@ -4,10 +4,15 @@
 add_library(rengine STATIC
         src/core/REngineCore.cpp
         src/core/RTime.cpp
+        src/core/Vector3.h
+        src/core/Color.h
+        src/core/Matrix4x4.h
+        src/core/Quaternion.h
         src/rendering/ImguiBackend.cpp
         src/rendering/DisplayManager.cpp
         src/rendering/RRenderer.cpp
         src/platform/RWindows.cpp
+
 )
 
 # 1. REngine includes.

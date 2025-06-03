@@ -4,6 +4,10 @@
 #include <rendering/DisplayManager.h>
 #include <rendering/RRenderer.h>
 #include <core/RTime.h>
+#include <core/Color.h>
+#include <core/Vector3.h>
+#include <core/Quaternion.h>
+#include <core/Matrix4x4.h>
 
 using REngine::RRenderer;
 
@@ -15,7 +19,13 @@ using REngine::RTime;
 
 using REngine::DisplayManager;
 
+using REngine::Vector3;
 
+using REngine::Quaternion;
+
+using REngine::Color;
+
+using REngine::Matrix4x4;
 
 namespace REngine {
     class REngineCore {

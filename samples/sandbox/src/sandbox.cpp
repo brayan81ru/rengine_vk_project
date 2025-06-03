@@ -3,6 +3,15 @@
 int main() {
     REngine::REngineCore::Init();
 
+
+    // Create transformation matrix
+    Vector3 position(1, 2, 3);
+    Quaternion rotation = Quaternion<>::FromEuler(0, 45, 0);
+    Vector3 scale(1, 1, 1);
+
+    Matrix4x4 worldMatrix = Matrix4x4::TRS(position, rotation, scale);
+
+
     // Initialize Window&Rendering
     RWindows window("Sandbox", 1280, 720);
 
