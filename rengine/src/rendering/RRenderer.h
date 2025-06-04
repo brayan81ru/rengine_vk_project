@@ -68,6 +68,8 @@ namespace REngine {
 
         void SetVSync(bool vsync);
 
+        Diligent::RefCntAutoPtr<Diligent::IRenderDevice> GetDevice() const { return m_pDevice;}
+
     private:
         bool m_Vsync = true;
         Diligent::NativeWindow m_Window;

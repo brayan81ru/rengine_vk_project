@@ -30,6 +30,12 @@ int main() {
 
     RRenderer renderer(REngine::RenderAPI::Direct3D12, nativeWindow);
 
+    auto device = renderer.GetDevice();
+
+    //auto resourceManager = ResourceManager::Get();
+
+    //auto text = resourceManager.LoadTexture(device,"C:/Users/Brayan/Desktop/Test Sprites/DarkGuard.png",Texture::Type::Texture2D);
+
     renderer.SetVSync(true);
 
     renderer.InitializeTriangleResources();

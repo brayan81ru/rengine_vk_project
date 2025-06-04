@@ -8,11 +8,6 @@
 #include <core/Vector3.h>
 #include <core/Quaternion.h>
 #include <core/Matrix4x4.h>
-#include <core/Texture.h>
-#include <core/Shader.h>
-#include <core/Buffer.h>
-#include <core/Material.h>
-#include <core/ResourceManager.h>
 
 using REngine::RRenderer;
 
@@ -32,15 +27,6 @@ using REngine::Color;
 
 using REngine::Matrix4x4;
 
-using REngine::Texture;
-
-using REngine::Shader;
-
-using REngine::Buffer;
-
-using REngine::Material;
-
-using REngine::ResourceManager;
 
 namespace REngine {
     class REngineCore {
