@@ -10,11 +10,11 @@ add_library(rengine STATIC
         src/core/Quaternion.h
         src/core/TextureManager.cpp
         src/core/Texture.cpp
+        src/core/Shader.cpp
         src/rendering/ImguiBackend.cpp
         src/rendering/DisplayManager.cpp
         src/rendering/RRenderer.cpp
         src/platform/RWindows.cpp
-
 )
 
 # 1. REngine includes.

@@ -10,6 +10,7 @@
 #include <core/Matrix4x4.h>
 #include <core/TextureManager.h>
 #include <core/Texture.h>
+#include <core/Shader.h>
 
 using REngine::RRenderer;
 
@@ -32,6 +33,8 @@ using REngine::Matrix4x4;
 using REngine::TextureManager;
 
 using REngine::Texture;
+
+using REngine::Shader;
 
 
 namespace REngine {

@@ -51,6 +51,9 @@ public:
     Diligent::ITexture* GetDiligentTexture() { return m_Texture.RawPtr(); }
     Diligent::ITextureView* GetDiligentTextureView() { return m_TextureSRV.RawPtr(); }
 
+    //Diligent::ITextureView* GetDiligentTextureView() { return m_TextureSRV.RawPtr(); }
+    const Diligent::ITextureView* GetDiligentTextureView() const { return m_TextureSRV.RawPtr(); }
+
 private:
     friend class TextureManager;
 
