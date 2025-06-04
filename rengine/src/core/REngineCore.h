@@ -1,41 +1,10 @@
 ﻿#pragma once
 #include <platform/RWindows.h>
-#include <rendering/ImguiBackend.h>
-#include <rendering/DisplayManager.h>
-#include <rendering/RRenderer.h>
 #include <core/RTime.h>
-#include <core/Color.h>
-#include <core/Vector3.h>
-#include <core/Quaternion.h>
-#include <core/Matrix4x4.h>
-#include <core/TextureManager.h>
-#include <core/Texture.h>
-#include <core/Shader.h>
-
-using REngine::RRenderer;
 
 using REngine::RWindows;
 
-using REngine::ImguiBackend;
-
 using REngine::RTime;
-
-using REngine::DisplayManager;
-
-using REngine::Vector3;
-
-using REngine::Quaternion;
-
-using REngine::Color;
-
-using REngine::Matrix4x4;
-
-using REngine::TextureManager;
-
-using REngine::Texture;
-
-using REngine::Shader;
-
 
 namespace REngine {
     class REngineCore {

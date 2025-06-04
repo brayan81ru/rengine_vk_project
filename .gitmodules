@@ -1,3 +1,0 @@
-[submodule "rengine/third_party/DiligentEngine"]
-	path = rengine/third_party/DiligentEngine
-	url = https://github.com/DiligentGraphics/DiligentEngine.git

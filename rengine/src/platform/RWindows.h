@@ -2,14 +2,12 @@
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <string>
-#include <NativeWindow.h>
+
 
 namespace REngine {
     class RWindows {
 
     public:
-
-        static Diligent::NativeWindow SDLWindowToNativeWindow(SDL_Window* window);
 
         RWindows(const std::string& title, int width, int height);
 

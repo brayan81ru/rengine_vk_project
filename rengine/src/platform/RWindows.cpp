@@ -1,34 +1,10 @@
 ﻿#include "RWindows.h"
 #include <stdexcept>
-#include <NativeWindow.h>
 #include <SDL_syswm.h>
 
 namespace REngine {
-    Diligent::NativeWindow RWindows::SDLWindowToNativeWindow(SDL_Window *window) {
-        SDL_SysWMinfo wmInfo;
-        SDL_VERSION(&wmInfo.version);
-        SDL_GetWindowWMInfo(window, &wmInfo);
-        Diligent::NativeWindow nativeWindow;
-
-        #ifdef _WIN32
-        nativeWindow.hWnd = wmInfo.info.win.window;
-        #elif __APPLE__
-        nativeWindow.hWnd = wmInfo.info.cocoa.window;// macOS impl
-        #elif __linux__
-        nativeWindow.hWnd = wmInfo.info.x11.window;
-        #nativeWindow.pDisplay = wmInfo.info.x11.display;
-        #endif
-
-        return nativeWindow;
-    }
-
     RWindows::RWindows(const std::string& title, int width, int height) {
-
         SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
-
-        //SDL_SetHint(SDL_HINT_WINDOWS_DPI_SCALING, "1");
-
-        //SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_SCALING, "1");
 
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) {
             throw std::runtime_error(SDL_GetError());
@@ -74,12 +50,9 @@ namespace REngine {
 
     bool RWindows::IsRunning() const {
         return !m_quit;
-
     }
 
     const SDL_Event *RWindows::SDL_GetEvent() const {
         return &m_Event;
     }
-
-
 }
