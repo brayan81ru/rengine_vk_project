@@ -14,11 +14,8 @@ namespace REngine {
     }
 
     bool Shader::Load(const std::string& vertexPath, const std::string& pixelPath) {
-        std::string vertexSrc, pixelSrc;
-
-        if (!ReadShaderFile(vertexPath, vertexSrc)) return false;
-        if (!ReadShaderFile(pixelPath, pixelSrc)) return false;
-
+        const std::string vertexSrc = ReadShaderFileAndRemoveBOM(vertexPath);
+        const std::string pixelSrc = ReadShaderFileAndRemoveBOM(pixelPath);
         return LoadFromMemory(vertexSrc, pixelSrc);
     }
 
@@ -142,5 +139,32 @@ namespace REngine {
         buffer << file.rdbuf();
         outSource = buffer.str();
         return true;
+    }
+
+    std::string Shader::ReadShaderFileAndRemoveBOM(const std::string& filePath) {
+        std::ifstream file(filePath, std::ios::binary);
+        if (!file.is_open()) {
+            throw std::runtime_error("Failed to open shader file: " + filePath);
+        }
+
+        // Read the entire file into a buffer
+        file.seekg(0, std::ios::end);
+        size_t fileSize = file.tellg();
+        file.seekg(0, std::ios::beg);
+
+        std::vector<char> buffer(fileSize + 1);
+        file.read(buffer.data(), fileSize);
+        buffer[fileSize] = '\0';
+
+        // Check for UTF-8 BOM (ï»¿)
+        if (fileSize >= 3 &&
+            static_cast<unsigned char>(buffer[0]) == 0xEF &&
+            static_cast<unsigned char>(buffer[1]) == 0xBB &&
+            static_cast<unsigned char>(buffer[2]) == 0xBF) {
+            // Skip BOM by returning from position 3
+            return std::string(buffer.data() + 3);
+            }
+
+        return std::string(buffer.data());
     }
 } // namespace REngine

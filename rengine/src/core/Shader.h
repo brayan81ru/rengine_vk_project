@@ -26,6 +26,9 @@ namespace REngine {
 
     private:
         bool ReadShaderFile(const std::string& path, std::string& outSource);
+
+        std::string ReadShaderFileAndRemoveBOM(const std::string &filePath);
+
         bool CompileShader(const std::string& source, Diligent::SHADER_TYPE type, Diligent::IShader** ppShader);
 
         Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_PSO;

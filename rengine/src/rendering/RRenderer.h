@@ -52,9 +52,6 @@ namespace REngine {
 
     class RRenderer {
     public:
-        void InitializeTriangleResources();
-
-        void RenderTriangle();
 
         RRenderer(RenderAPI RenderApi, Diligent::NativeWindow NativeWindowHandle);
 
