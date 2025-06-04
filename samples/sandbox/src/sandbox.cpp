@@ -39,10 +39,21 @@ int main() {
     // Initialize and load the vertex shaders and pixel shaders.
     Shader shader;
 
+
     if (!shader.Load("./assets/shaders/shaderTestTriangle.vs", "./assets/shaders/shaderTestTriangle.ps")) {
         std::cerr << "Failed to load shaders" << std::endl;
         return 1;
     }
+
+    /*
+    Shader pbrShader;
+    if (!pbrShader.Load("./assets/engine/shaders/PBR.vs", "./assets/engine/shaders/PBR.ps")) {
+        std::cerr << "Failed to load PBR shaders" << std::endl;
+        return 1;
+    }
+    */
+
+
 
     while (window.IsRunning()) {
         window.Run();
@@ -56,6 +67,7 @@ int main() {
         Diligent::DrawAttribs drawAttrs;
         drawAttrs.NumVertices = 3; // We will render 3 vertices
         renderer.GetDeviceContext()->Draw(drawAttrs);
+
 
         // Render the Stats UI.
         renderer.RenderStatsUI(RTime::GetFPS(),RTime::GetFrameTimeMS(), displayMode, true);

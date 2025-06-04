@@ -53,14 +53,20 @@ namespace REngine {
 
         // Create vertex buffer layout
 
-        const Diligent::LayoutElement LayoutElems[] = {
-            {0, 0, 3, Diligent::VT_FLOAT32, false}, // Position
-            {1, 0, 2, Diligent::VT_FLOAT32, false}  // UV
+        // 5. Configure input layout (MUST match your vertex structure)
+        /*
+        Diligent::LayoutElement LayoutElems[] =
+        {
+            // Attribute, semantic name, index, format, buffer slot, offset
+            {0, 0, 3, Diligent::VT_FLOAT32, Diligent::False, offsetof(Vector3, Pos)},
+            {1, 0, 3, Diligent::VT_FLOAT32, Diligent::False, offsetof(Vector3, Normal)},
+            {2, 0, 4, Diligent::VT_FLOAT32, Diligent::False, offsetof(Vector3, Color)},
+            {3, 0, 2, Diligent::VT_FLOAT32, Diligent::False, offsetof(Vector3, UV)}
         };
-
         PSOCreateInfo.GraphicsPipeline.InputLayout.LayoutElements = LayoutElems;
+        */
 
-        //-PSOCreateInfo.GraphicsPipeline.InputLayout.NumElements = 1;
+        //PSOCreateInfo.GraphicsPipeline.InputLayout.NumElements = 2;
 
         // Create uniform buffer
         Diligent::BufferDesc CBDesc;
