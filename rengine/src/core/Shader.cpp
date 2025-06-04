@@ -55,12 +55,15 @@ namespace REngine {
         PSOCreateInfo.GraphicsPipeline.RasterizerDesc.CullMode = Diligent::CULL_MODE_BACK;
 
         // Create vertex buffer layout
-        Diligent::LayoutElement LayoutElems[] = {
+
+        const Diligent::LayoutElement LayoutElems[] = {
             {0, 0, 3, Diligent::VT_FLOAT32, false}, // Position
             {1, 0, 2, Diligent::VT_FLOAT32, false}  // UV
         };
+
         PSOCreateInfo.GraphicsPipeline.InputLayout.LayoutElements = LayoutElems;
-        PSOCreateInfo.GraphicsPipeline.InputLayout.NumElements = _countof(LayoutElems);
+
+        //-PSOCreateInfo.GraphicsPipeline.InputLayout.NumElements = 1;
 
         // Create uniform buffer
         Diligent::BufferDesc CBDesc;
@@ -76,7 +79,9 @@ namespace REngine {
         if (!m_PSO) return false;
 
         // Bind uniform buffer
-        m_PSO->GetStaticVariableByName(Diligent::SHADER_TYPE_VERTEX, "Constants")->Set(m_VSConstants);
+        if (auto* constants = m_PSO->GetStaticVariableByName(Diligent::SHADER_TYPE_VERTEX, "Constants")) {
+            constants->Set(m_VSConstants);
+        }
 
         // Create shader resource binding
         m_PSO->CreateShaderResourceBinding(&m_SRB, true);
@@ -105,7 +110,7 @@ namespace REngine {
     void Shader::SetTexture(const std::string& name, const Texture& texture) {
         if (!m_SRB) return;
 
-        // Get non-const texture view
+        // Get non-const txture view
         Diligent::ITextureView* pTextureView = const_cast<Texture&>(texture).GetDiligentTextureView();
         if (!pTextureView) return;
 
