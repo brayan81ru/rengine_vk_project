@@ -9,6 +9,7 @@ add_library(rengine STATIC
         src/core/Matrix4x4.h
         src/core/Quaternion.h
         src/core/TextureManager.cpp
+        src/core/Texture.cpp
         src/rendering/ImguiBackend.cpp
         src/rendering/DisplayManager.cpp
         src/rendering/RRenderer.cpp
@@ -45,6 +46,7 @@ target_link_libraries(rengine PUBLIC
         Diligent-Imgui
         Diligent-ShaderTools
         Diligent-GraphicsTools
+        Diligent-TextureLoader
         Diligent-GraphicsEngineD3D12-static
         Diligent-GraphicsEngineD3D11-static
         Diligent-GraphicsEngineOpenGL-static

@@ -17,6 +17,7 @@ namespace REngine {
 
     void TextureManager::Initialize(Diligent::IRenderDevice* pDevice, Diligent::IDeviceContext* pContext) {
         m_pDevice = pDevice;
+
         m_pContext = pContext;
 
         // Check bindless support by checking for dynamic shader resource binding

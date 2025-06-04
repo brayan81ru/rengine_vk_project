@@ -68,7 +68,8 @@ namespace REngine {
 
         void SetVSync(bool vsync);
 
-        Diligent::RefCntAutoPtr<Diligent::IRenderDevice> GetDevice() const { return m_pDevice;}
+        [[nodiscard]] Diligent::RefCntAutoPtr<Diligent::IRenderDevice> GetDevice() const { return m_pDevice;}
+        [[nodiscard]] Diligent::RefCntAutoPtr<Diligent::IDeviceContext> GetDeviceContext() const { return m_pImmediateContext;}
 
     private:
         bool m_Vsync = true;

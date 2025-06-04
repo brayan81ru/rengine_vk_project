@@ -3,14 +3,12 @@
 int main() {
     REngine::REngineCore::Init();
 
-
     // Create transformation matrix
     Vector3 position(1, 2, 3);
     Quaternion rotation = Quaternion<>::FromEuler(0, 45, 0);
     Vector3 scale(1, 1, 1);
 
     Matrix4x4 worldMatrix = Matrix4x4::TRS(position, rotation, scale);
-
 
     // Initialize Window&Rendering
     RWindows window("Sandbox", 1280, 720);
@@ -26,17 +24,17 @@ int main() {
 
     auto displayMode = DisplayManager::GetCurrentMode(0);
 
+    // Set the display mode.
     DisplayManager::ApplyDisplayMode(&window,displayMode,REngine::FullScreenMode::FullScreenWindow);
 
+    // Initialize the renderer.
     RRenderer renderer(REngine::RenderAPI::Direct3D12, nativeWindow);
 
-    auto device = renderer.GetDevice();
-
-    //auto resourceManager = ResourceManager::Get();
-
-    //auto text = resourceManager.LoadTexture(device,"C:/Users/Brayan/Desktop/Test Sprites/DarkGuard.png",Texture::Type::Texture2D);
-
+    // Sey VSync.
     renderer.SetVSync(true);
+
+    // Initialize the texture manager class.
+    TextureManager::GetInstance().Initialize(renderer.GetDevice(),renderer.GetDeviceContext());
 
     renderer.InitializeTriangleResources();
 
