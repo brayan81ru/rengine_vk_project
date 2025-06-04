@@ -1,6 +1,8 @@
 ﻿#include "REngineCore.h"
+#include "renderers/VulkanRenderer.h"
 #include <iostream>
 
+using REngine::VulkanRenderer;
 
 namespace REngine {
     REngineCore * REngineCore::Init() {

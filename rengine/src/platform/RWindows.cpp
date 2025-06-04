@@ -11,7 +11,7 @@ namespace REngine {
         }
 
         // Platform-optimized flags
-        Uint32 flags = SDL_WINDOW_SHOWN;
+        Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN;
 
         #if defined(__APPLE__)
         flags |= SDL_WINDOW_ALLOW_HIGHDPI;  // macOS Retina support

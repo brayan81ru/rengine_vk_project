@@ -5,6 +5,7 @@ add_library(rengine STATIC
         src/core/REngineCore.cpp
         src/core/RTime.cpp
         src/platform/RWindows.cpp
+        src/renderers/VulkanRenderer.cpp
 )
 
 # 1. REngine includes.
@@ -20,12 +21,26 @@ target_include_directories(rengine PRIVATE
         ${IMGUI_DIR}
 )
 
+# Find Vulkan SDK
+find_package(Vulkan REQUIRED)
+
+# Include directories
+target_include_directories(rengine PUBLIC
+        ${Vulkan_INCLUDE_DIRS}
+        ${SDL2_INCLUDE_DIRS}
+        include/
+)
+
+
+# Add these definitions to enable SDL Vulkan functions
+add_definitions(-DSDL_VIDEO_VULKAN)
+
 
 # Link to your target
 #target_link_libraries(your_target PRIVATE imgui)
 
 # 4. Diligent Engine libraries.
 target_link_libraries(rengine PUBLIC
-        SDL2::SDL2
-        SDL2::SDL2main
+        ${Vulkan_LIBRARIES}
+        ${SDL2_LIBRARIES}
 )
