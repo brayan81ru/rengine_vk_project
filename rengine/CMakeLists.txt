@@ -8,6 +8,7 @@ add_library(rengine STATIC
         src/core/Color.h
         src/core/Matrix4x4.h
         src/core/Quaternion.h
+        src/core/TextureManager.cpp
         src/rendering/ImguiBackend.cpp
         src/rendering/DisplayManager.cpp
         src/rendering/RRenderer.cpp

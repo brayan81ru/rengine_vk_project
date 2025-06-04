@@ -8,6 +8,7 @@
 #include <core/Vector3.h>
 #include <core/Quaternion.h>
 #include <core/Matrix4x4.h>
+#include <core/TextureManager.h>
 
 using REngine::RRenderer;
 
@@ -26,6 +27,7 @@ using REngine::Quaternion;
 using REngine::Color;
 
 using REngine::Matrix4x4;
+
 
 
 namespace REngine {
