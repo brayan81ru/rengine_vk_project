@@ -1,6 +1,4 @@
 ﻿#include "TextureManager.h"
-#include "Texture.h"
-#include "DiligentCore/Graphics/GraphicsEngine/interface/EngineFactory.h"
 #include <DiligentCore/Graphics/GraphicsAccessories/interface/GraphicsAccessories.hpp>
 
 namespace REngine {

@@ -28,6 +28,7 @@ using REngine::Color;
 
 using REngine::Matrix4x4;
 
+using REngine::TextureManager;
 
 
 namespace REngine {
