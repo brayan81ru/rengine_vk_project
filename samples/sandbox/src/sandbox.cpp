@@ -1,10 +1,17 @@
 ﻿#include <iostream>
+
 #include <core/REngineCore.h>
 
 int main() {
     REngine::REngineCore::Init();
 
     RWindows window("Sandbox", 1280, 720);
+
+    DisplayManager::Initialize();
+
+    auto currentDisplayMode = DisplayManager::GetCurrentMode();
+
+    DisplayManager::ApplyDisplayMode(window.GetNativeWindow(), nullptr, currentDisplayMode,REngine::FullScreenMode::FullScreenWindow);
 
     VulkanRenderer renderer;
 

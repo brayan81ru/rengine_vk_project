@@ -21,7 +21,10 @@ namespace REngine {
     }
 
     bool VulkanRenderer::Initialize(SDL_Window* window) {
+
         m_window = window;
+
+        m_initialized = false;
 
         try {
             if (!CreateInstance()) {
@@ -68,9 +71,10 @@ namespace REngine {
                 Shutdown();
                 return false;
             }
-
+            m_initialized = true;
             return true;
         } catch (const std::exception& e) {
+            m_initialized = false;
             std::cerr << "Vulkan initialization error: " << e.what() << std::endl;
             Shutdown();
             return false;
@@ -221,6 +225,13 @@ namespace REngine {
         m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
     }
 
+    void VulkanRenderer::SetVsync(const bool enabled) {
+        m_Vsync = enabled;
+
+        // Recreate swapchain with new present mode
+        RecreateSwapchain();
+    }
+
     void VulkanRenderer::CleanupSwapchain() {
         // Destroy framebuffers first (before render pass and image views)
         if (m_device != VK_NULL_HANDLE) {
@@ -248,26 +259,39 @@ namespace REngine {
     }
 
     void VulkanRenderer::RecreateSwapchain() {
+
+        if (!m_initialized) {
+            return;
+        }
+
         int width = 0, height = 0;
+
         SDL_GetWindowSize(m_window, &width, &height);
+
         while (width == 0 || height == 0) {
             SDL_GetWindowSize(m_window, &width, &height);
+
             SDL_WaitEvent(nullptr);
         }
 
         vkDeviceWaitIdle(m_device);
+
         CleanupSwapchain();
 
         CreateSwapchain();
+
         CreateImageViews();
+
         CreateFramebuffers();
     }
 
     bool VulkanRenderer::CreateSwapchain() {
         VkSurfaceCapabilitiesKHR capabilities;
+
         vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &capabilities);
 
         m_swapchainExtent = capabilities.currentExtent;
+
         if (m_swapchainExtent.width == UINT32_MAX) {
             int width, height;
             SDL_GetWindowSize(m_window, &width, &height);
@@ -285,7 +309,7 @@ namespace REngine {
         createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
         createInfo.preTransform = capabilities.currentTransform;
         createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-        createInfo.presentMode = VK_PRESENT_MODE_FIFO_KHR;
+        createInfo.presentMode = m_Vsync ? VK_PRESENT_MODE_FIFO_KHR : VK_PRESENT_MODE_IMMEDIATE_KHR;
         createInfo.clipped = VK_TRUE;
 
         if (vkCreateSwapchainKHR(m_device, &createInfo, nullptr, &m_swapchain) != VK_SUCCESS) {
@@ -293,11 +317,15 @@ namespace REngine {
         }
 
         uint32_t imageCount;
+
         vkGetSwapchainImagesKHR(m_device, m_swapchain, &imageCount, nullptr);
+
         m_swapchainImages.resize(imageCount);
+
         vkGetSwapchainImagesKHR(m_device, m_swapchain, &imageCount, m_swapchainImages.data());
 
         m_swapchainImageFormat = VK_FORMAT_B8G8R8A8_SRGB;
+
         return true;
     }
 

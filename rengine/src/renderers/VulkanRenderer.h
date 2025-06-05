@@ -11,15 +11,27 @@ namespace REngine {
     class VulkanRenderer {
     public:
         VulkanRenderer();
+
         ~VulkanRenderer();
 
         bool Initialize(SDL_Window* window);
+
         void Shutdown();
 
         bool BeginFrame();
+
         void EndFrame();
 
+        void SetVsync(bool enabled);
+
+        void RecreateSwapchain();
+
     private:
+
+        // Vsync
+        bool m_Vsync = true;
+        VkPresentModeKHR m_currentPresentMode;
+
         // Constants
         static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -59,6 +71,7 @@ namespace REngine {
         uint32_t m_currentFrame;
         uint32_t m_imageIndex;
         SDL_Window* m_window;
+        bool m_initialized = false;
 
         // Initialization methods
         bool CreateInstance();
@@ -75,7 +88,7 @@ namespace REngine {
 
         // Helper methods
         void CleanupSwapchain();
-        void RecreateSwapchain();
+
     };
 
 } // namespace REngine

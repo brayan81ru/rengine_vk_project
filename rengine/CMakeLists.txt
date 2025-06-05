@@ -4,6 +4,7 @@
 add_library(rengine STATIC
         src/core/REngineCore.cpp
         src/core/RTime.cpp
+        src/renderers/DisplayManager.cpp
         src/platform/RWindows.cpp
         src/renderers/VulkanRenderer.cpp
 )
