@@ -1,7 +1,10 @@
 ﻿#include "VulkanRenderer.h"
 #include <stdexcept>
 #include <iostream>
-#include <set>
+#include <imgui.h>
+#include <backends/imgui_impl_vulkan.h>
+#include <backends/imgui_impl_sdl2.h>
+
 
 namespace REngine {
     VulkanRenderer::VulkanRenderer()
@@ -170,7 +173,7 @@ namespace REngine {
         renderPassInfo.framebuffer = m_framebuffers[m_imageIndex];
         renderPassInfo.renderArea.extent = m_swapchainExtent;
 
-        VkClearValue clearColor = {{{0.2f, 0.3f, 0.4f, 1.0f}}};
+        constexpr VkClearValue clearColor = {{{0.2f, 0.3f, 0.4f, 1.0f}}};
         renderPassInfo.clearValueCount = 1;
         renderPassInfo.pClearValues = &clearColor;
 
@@ -446,7 +449,7 @@ namespace REngine {
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.commandPool = m_commandPool;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandBufferCount = (uint32_t)m_commandBuffers.size();
+        allocInfo.commandBufferCount = static_cast<uint32_t>(m_commandBuffers.size());
 
         if (vkAllocateCommandBuffers(m_device, &allocInfo, m_commandBuffers.data()) != VK_SUCCESS) {
             return false;
@@ -601,6 +604,96 @@ namespace REngine {
     bool VulkanRenderer::RecreateVulkanDevice() {
         Shutdown();
         return Initialize(m_window); // Reinitialize with existing window
+    }
+
+    void VulkanRenderer::InitImGui(SDL_Window* window) {
+        VkDescriptorPoolSize pool_sizes[] = {{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },};
+        vkCreateDescriptorPool(m_device, &m_poolInfo, nullptr, &m_imguiDescriptorPool);
+
+        // 1. Setup ImGui context
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+
+        // 2. Setup Platform/Renderer backends
+        ImGui_ImplSDL2_InitForVulkan(window);
+        ImGui_ImplVulkan_InitInfo init_info = {};
+        init_info.Instance = m_instance;
+        init_info.PhysicalDevice = m_physicalDevice;
+        init_info.Device = m_device;
+        init_info.QueueFamily = m_graphicsQueueFamilyIndex;
+        init_info.Queue = m_graphicsQueue;
+        init_info.PipelineCache = VK_NULL_HANDLE;
+        init_info.DescriptorPool = m_imguiDescriptorPool; // Create this earlier!
+        init_info.MinImageCount = m_swapchainImages.size();
+        init_info.ImageCount = m_swapchainImages.size();
+        init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+        init_info.RenderPass = m_renderPass;
+        ImGui_ImplVulkan_Init(&init_info); // Use your main render pass
+
+        // 3. Create default fonts texture.
+        ImGui_ImplVulkan_CreateFontsTexture();
+
+    }
+
+    void VulkanRenderer::RenderImGui() const {
+        ImGui_ImplVulkan_NewFrame();
+        ImGui_ImplSDL2_NewFrame(); // Pass SDL_Window*
+        ImGui::NewFrame();
+
+        // Draw your debug text
+        ImGui::Begin("STATS",0,ImGuiWindowFlags_NoMove);
+        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+        ImGui::End();
+
+        // Render
+        ImGui::Render();
+        ImDrawData* draw_data = ImGui::GetDrawData();
+        ImGui_ImplVulkan_RenderDrawData(draw_data, m_commandBuffers[m_currentFrame]);
+    }
+
+    void VulkanRenderer::ProcessImGuiEvents(const SDL_Event* event) const {
+
+        ImGuiIO& io = ImGui::GetIO();
+
+        switch (event->type) {
+            case SDL_MOUSEMOTION: {
+                io.AddMousePosEvent(
+                    event->motion.x,
+                    event->motion.y
+                );
+                break;
+            }
+
+            case SDL_MOUSEBUTTONDOWN:
+            case SDL_MOUSEBUTTONUP: {
+                int button = -1;
+                if (event->button.button == SDL_BUTTON_LEFT) button = 0;
+                if (event->button.button == SDL_BUTTON_RIGHT) button = 1;
+                if (event->button.button == SDL_BUTTON_MIDDLE) button = 2;
+                if (button != -1)
+                    io.AddMouseButtonEvent(button, event->type == SDL_MOUSEBUTTONDOWN);
+                break;
+            }
+            case SDL_MOUSEWHEEL:
+                io.AddMouseWheelEvent((float)event->wheel.x, (float)event->wheel.y);
+                break;
+            case SDL_KEYDOWN:
+            case SDL_KEYUP:
+                // Handle keyboard events
+                break;
+            case SDL_TEXTINPUT:
+                io.AddInputCharactersUTF8(event->text.text);
+                break;
+            default: break;
+        }
+
+    }
+
+    void VulkanRenderer::ShutdownImGui() {
+        ImGui_ImplVulkan_Shutdown();
+        ImGui_ImplSDL2_Shutdown();
+        ImGui::DestroyContext();
     }
 
 } // namespace REngine

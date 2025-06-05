@@ -30,13 +30,24 @@ namespace REngine {
 
         void HandleDeviceLost();
 
-        bool IsDeviceLost() const { return m_deviceLost; }
+        [[nodiscard]] bool IsDeviceLost() const { return m_deviceLost; }
+
+        void InitImGui(SDL_Window *window);
+
+        void RenderImGui() const;
+
+        void ProcessImGuiEvents(const SDL_Event *event) const;
+
+        void ShutdownImGui();
 
     private:
 
         // Vsync
         bool m_Vsync = true;
         VkPresentModeKHR m_currentPresentMode;
+
+        VkDescriptorPool m_imguiDescriptorPool;
+        VkDescriptorPoolCreateInfo m_poolInfo;
 
         // Constants
         static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
@@ -98,7 +109,6 @@ namespace REngine {
         // Handle Device Lost
         bool m_deviceLost = false;
         bool RecreateVulkanDevice();
-
     };
 
 } // namespace REngine

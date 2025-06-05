@@ -1,5 +1,4 @@
 ﻿#include <iostream>
-
 #include <core/REngineCore.h>
 
 int main() {
@@ -22,10 +21,14 @@ int main() {
         return 1;
     }
 
+    renderer.InitImGui(window.GetNativeWindow());
+
     while (window.IsRunning()) {
         window.Run();
         RTime::Update();
+        renderer.ProcessImGuiEvents(window.SDL_GetEvent());
         renderer.BeginFrame();
+        renderer.RenderImGui();
         renderer.EndFrame();
 
         // Handle Device Lost.
@@ -35,6 +38,7 @@ int main() {
         }
     }
 
+    renderer.ShutdownImGui();
     renderer.Shutdown();
     SDL_DestroyWindow(window.GetNativeWindow());
     SDL_Quit();

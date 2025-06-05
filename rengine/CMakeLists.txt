@@ -18,12 +18,11 @@ target_include_directories(rengine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third_part
 # 4. Integrate SDL2.
 find_package(SDL2 REQUIRED)
 
-target_include_directories(rengine PRIVATE
-        ${IMGUI_DIR}
-)
-
 # Find Vulkan SDK
 find_package(Vulkan REQUIRED)
+
+# Add these definitions to enable SDL Vulkan functions
+add_definitions(-DSDL_VIDEO_VULKAN)
 
 # Include directories
 target_include_directories(rengine PUBLIC
@@ -33,15 +32,28 @@ target_include_directories(rengine PUBLIC
 )
 
 
-# Add these definitions to enable SDL Vulkan functions
-add_definitions(-DSDL_VIDEO_VULKAN)
+#ImgUI Requirements.
+add_library(imgui STATIC
+        third_party/imgui/imgui.cpp
+        third_party/imgui/imgui_draw.cpp
+        third_party/imgui/imgui_tables.cpp
+        third_party/imgui/imgui_widgets.cpp
+        third_party/imgui/backends/imgui_impl_vulkan.cpp
+        third_party/imgui/backends/imgui_impl_sdl2.cpp
+)
 
+#ImgUI required includes.
+target_include_directories(imgui PUBLIC
+        ${Vulkan_INCLUDE_DIRS}
+        ${SDL2_INCLUDE_DIRS}
+)
 
-# Link to your target
-#target_link_libraries(your_target PRIVATE imgui)
+#ImgUI sources.
+target_include_directories(imgui PUBLIC third_party/imgui)
 
 # 4. Diligent Engine libraries.
 target_link_libraries(rengine PUBLIC
         ${Vulkan_LIBRARIES}
         ${SDL2_LIBRARIES}
+        imgui
 )
