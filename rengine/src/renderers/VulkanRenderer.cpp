@@ -214,7 +214,9 @@ namespace REngine {
         presentInfo.pSwapchains = swapChains;
         presentInfo.pImageIndices = &m_imageIndex;
 
-        VkResult result = vkQueuePresentKHR(m_presentQueue, &presentInfo);
+        const VkResult result = vkQueuePresentKHR(m_presentQueue, &presentInfo);
+
+        CheckVkResult(result);
 
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
             RecreateSwapchain();
@@ -223,6 +225,25 @@ namespace REngine {
         }
 
         m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+    }
+
+    // Helper method to check for device loss from Vulkan results
+    void VulkanRenderer::CheckVkResult(const VkResult result) {
+        switch (result) {
+            case VK_SUCCESS:
+                break;
+            case VK_ERROR_DEVICE_LOST:
+                m_deviceLost = true;
+                // You might want to log this or take additional action
+                break;
+            case VK_ERROR_OUT_OF_DATE_KHR:
+            case VK_SUBOPTIMAL_KHR:
+                m_deviceLost = true;
+                break;
+            default:
+                // For other errors, you might want to assert or log
+                break;
+        }
     }
 
     void VulkanRenderer::SetVsync(const bool enabled) {
@@ -562,6 +583,24 @@ namespace REngine {
         }
 
         return true;
+    }
+
+    void VulkanRenderer::HandleDeviceLost() {
+        m_deviceLost = true;
+
+        try {
+            if (!RecreateVulkanDevice()) {
+                throw std::runtime_error("Failed to recover from device loss");
+            }
+            m_deviceLost = false;
+        } catch (...) {
+
+        }
+    }
+
+    bool VulkanRenderer::RecreateVulkanDevice() {
+        Shutdown();
+        return Initialize(m_window); // Reinitialize with existing window
     }
 
 } // namespace REngine

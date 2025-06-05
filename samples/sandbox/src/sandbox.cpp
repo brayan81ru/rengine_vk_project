@@ -27,6 +27,12 @@ int main() {
         RTime::Update();
         renderer.BeginFrame();
         renderer.EndFrame();
+
+        // Handle Device Lost.
+        if (renderer.IsDeviceLost()) {
+            renderer.HandleDeviceLost();
+            continue;
+        }
     }
 
     renderer.Shutdown();

@@ -22,9 +22,15 @@ namespace REngine {
 
         void EndFrame();
 
+        void CheckVkResult(VkResult result);
+
         void SetVsync(bool enabled);
 
         void RecreateSwapchain();
+
+        void HandleDeviceLost();
+
+        bool IsDeviceLost() const { return m_deviceLost; }
 
     private:
 
@@ -88,6 +94,10 @@ namespace REngine {
 
         // Helper methods
         void CleanupSwapchain();
+
+        // Handle Device Lost
+        bool m_deviceLost = false;
+        bool RecreateVulkanDevice();
 
     };
 
