@@ -40,6 +40,12 @@ namespace REngine {
 
         void ShutdownImGui();
 
+        [[nodiscard]] VkDevice GetDevice() const { return m_device; }
+        [[nodiscard]] VkPhysicalDevice GetPhysicalDevice() const { return m_physicalDevice; }
+        [[nodiscard]] VkCommandPool GetCommandPool() const { return m_commandPool; }
+        [[nodiscard]] VkQueue GetQueue() const { return m_graphicsQueue; }
+
+
     private:
 
         // Vsync

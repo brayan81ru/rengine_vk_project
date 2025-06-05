@@ -23,6 +23,14 @@ int main() {
 
     renderer.InitImGui(window.GetNativeWindow());
 
+    const auto texture = new Texture();
+    texture->CreateFromFile(
+        renderer.GetDevice(),
+        renderer.GetPhysicalDevice(),
+        renderer.GetCommandPool(),
+        renderer.GetQueue(),
+        "d:/test/001.png");
+
     while (window.IsRunning()) {
         window.Run();
         RTime::Update();

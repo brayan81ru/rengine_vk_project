@@ -7,10 +7,18 @@ add_library(rengine STATIC
         src/renderers/DisplayManager.cpp
         src/platform/RWindows.cpp
         src/renderers/VulkanRenderer.cpp
+        src/renderers/Texture.cpp
+        src/renderers/Shader.cpp
+        src/core/VulkanBuffer.cpp
 )
+
+
 
 # 1. REngine includes.
 target_include_directories(rengine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(rengine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/core)
+target_include_directories(rengine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb)
+target_include_directories(rengine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third_party/SPIRV)
 
 # 3. Diligent Engine includes.
 target_include_directories(rengine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third_party/SDL)
@@ -50,6 +58,8 @@ target_include_directories(imgui PUBLIC
 
 #ImgUI sources.
 target_include_directories(imgui PUBLIC third_party/imgui)
+target_include_directories(imgui PUBLIC third_party/glm)
+
 
 # 4. Diligent Engine libraries.
 target_link_libraries(rengine PUBLIC
